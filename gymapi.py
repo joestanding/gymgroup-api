@@ -43,12 +43,6 @@ class GymGroupAPI:
 
     
     def _api_req(self, method, endpoint, data=None, retry_on_auth_fail=True):
-
-        if self.user_id is None:
-            logger.error("User ID is null, authentication hasn't happened or " \
-                    "has failed.")
-            return False
-
         if method != 'POST' and method !='GET':
             logger.error("Invalid HTTP method specified to _api_req!")
             return False
