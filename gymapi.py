@@ -7,7 +7,11 @@ from requests.compat import urljoin
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# =========================================================================== #
+
 class GymGroupAPI:
+
+    # ----------------------------------------------------------------------- #
 
     BASE_URL = 'https://thegymgroup.netpulse.com/np/'
     ENDPOINT_LOGIN = 'exerciser/login'
@@ -27,6 +31,7 @@ class GymGroupAPI:
                 "applicationVersionCode=38"
     }
 
+    # ----------------------------------------------------------------------- #
 
     def __init__(self, username, password):
         self.username   = username
@@ -37,11 +42,12 @@ class GymGroupAPI:
         self.api_sess.headers = self.REQ_HEADERS
 
         if not self._load_state():
-            logger.debug("State file didn't exist or failed to load, logging..")
+            logger.debug("State file didn't exist or failed to load")
             if not self.login():
                 logger.error("Authentication failed! Check credentials.")
 
-    
+    # ----------------------------------------------------------------------- #
+
     def _api_req(self, method, endpoint, data=None, retry_on_auth_fail=True):
         if method != 'POST' and method !='GET':
             logger.error("Invalid HTTP method specified to _api_req!")
@@ -58,8 +64,8 @@ class GymGroupAPI:
                 response = self.api_sess.get(final_url)
                 response.raise_for_status()
         except requests.exceptions.HTTPError as exc:
-            logger.error(f"HTTP error {response.status_code} on API {method}! " \
-                    f"Error: {exc}")
+            logger.error(f"HTTP error {response.status_code} on API " \
+                    f"{method} Error: {exc}")
             if response.status_code == 403 and retry_on_auth_fail:
                 logger.error("Server returned auth. failure, logging in..")
                 if not self.login():
@@ -82,7 +88,8 @@ class GymGroupAPI:
 
         return response
 
-    
+    # ----------------------------------------------------------------------- #
+
     def _load_state(self):
         try:
             with open(self.STATE_FILE, 'r') as file_handle:
@@ -95,11 +102,13 @@ class GymGroupAPI:
             logger.error(f"Exception occurred loading cookie jar: {exc}")
             return False
 
+    # ----------------------------------------------------------------------- #
 
     def _save_state(self, state):
         with open(self.STATE_FILE, 'w') as file_handle:
             json.dump(state, file_handle)
 
+    # ----------------------------------------------------------------------- #
 
     def login(self):
         if not self.username or not self.password:
@@ -131,9 +140,10 @@ class GymGroupAPI:
 
         state = { 'cookies': cookies, 'login_resp': resp_json }
         self._save_state(state)
-        
+
         return True
-    
+
+    # ----------------------------------------------------------------------- #
 
     def get_gym_occupancy(self, gym_uuid):
         endpoint = f"thegymgroup/v1.0/exerciser/{self.user_id}/gym-busyness?" \
@@ -147,8 +157,10 @@ class GymGroupAPI:
         try:
             resp_json = response.json()
         except json.JSONDecodeError as exc:
-            logger.error(f"Gym occupancy response was not valid JSON! Exc: {exc}")
+            logger.error(f"Gym occupancy response not valid JSON! Exc: {exc}")
             return False
-        
+
         logger.debug(f"Gym occupancy JSON: {json}")
         return resp_json.get('currentCapacity')
+
+# =========================================================================== #
