@@ -163,4 +163,42 @@ class GymGroupAPI:
         logger.debug(f"Gym occupancy JSON: {json}")
         return resp_json.get('currentCapacity')
 
+    # ----------------------------------------------------------------------- #
+
+    def get_all_gyms(self):
+        endpoint = "company/children?responseType=basic"
+        response = self._api_req('GET', endpoint)
+
+        if not response:
+            logger.error("Failed to retrieve gym list!")
+            return False
+
+        try:
+            resp_json = response.json()
+        except json.JSONDecodeError as exc:
+            logger.error(f"Gym list response not valid JSON! Exc: {exc}")
+            return False
+
+        logger.debug(f"Retrieved {len(resp_json)} gyms")
+        return resp_json
+
+    # ----------------------------------------------------------------------- #
+
+    def get_gym(self, gym_uuid):
+        endpoint = f"companies/{gym_uuid}"
+        response = self._api_req('GET', endpoint)
+
+        if not response:
+            logger.error("Failed to retrieve gym info!")
+            return False
+
+        try:
+            resp_json = response.json()
+        except json.JSONDecodeError as exc:
+            logger.error(f"Gym info response not valid JSON! Exc: {exc}")
+            return False
+
+        logger.debug(f"Retrieved gym: {resp_json.get('name')}")
+        return resp_json
+
 # =========================================================================== #
