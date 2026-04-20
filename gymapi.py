@@ -22,13 +22,13 @@ class GymGroupAPI:
         'Connection': 'Keep-Alive',
         'User-Agent': 'okhttp/3.12.3',
         'X-NP-API-Version': '1.5',
-        'X-NP-App-Version': '5.0',
+        'X-NP-App-Version': '7.4',
         "X-NP-User-Agent": "clientType=MOBILE_DEVICE; " \
                 "devicePlatform=ANDROID; " \
                 "deviceUid=; " \
                 "applicationName=The Gym Group; " \
-                "applicationVersion=5.0; " \
-                "applicationVersionCode=38"
+                "applicationVersion=7.4; " \
+                "applicationVersionCode=114"
     }
 
     # ----------------------------------------------------------------------- #
